@@ -1,0 +1,161 @@
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.member-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.member-card.selected {
+  border-color: #7dd3fc;
+  background: rgba(96, 165, 250, 0.08);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
+}
+
+.member-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.member-top h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.member-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.member-district {
+  color: #8aa0ba;
+  font-size: 0.92rem;
+}
+
+.checkbox-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #18253c;
+  border: 1px solid #2f4363;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.checkbox-pill input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox-pill span {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid #8aa0ba;
+  display: inline-block;
+}
+
+.checkbox-pill input:checked + span {
+  background: #60a5fa;
+  border-color: #60a5fa;
+  box-shadow: inset 0 0 0 2px #07111f;
+}
+
+.member-card.selected .checkbox-pill {
+  border-color: #7dd3fc;
+  background: rgba(125, 211, 252, 0.12);
+  box-shadow: 0 0 0 2px rgba(125, 211, 252, 0.2);
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #23324a;
+  color: #dbeafe;
+  font-size: 0.75rem;
+  border: 1px solid #334e6b;
+}
+
+.affiliation-tag {
+  font-family: "Segoe UI Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.tag.accent {
+  background: #23324a;
+  color: #dbeafe;
+}
+
+.tag.party.blue {
+  background: #1d4ed8;
+  color: #eff6ff;
+}
+
+.tag.party.red {
+  background: #b91c1c;
+  color: #fef2f2;
+}
+
+.vote-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vote-pill {
+  background: #23324a;
+  border: 1px solid #334e6b;
+}
+
+.vote-pill-yes.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: #4ade80;
+}
+
+.vote-pill-no.active {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: #fca5a5;
+}
+
+.vote-pill-present.active {
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #1f2937;
+  border-color: #fcd34d;
+}
+
+.toggle-select {
+  align-self: flex-start;
+}
