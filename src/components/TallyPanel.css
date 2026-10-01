@@ -369,6 +369,10 @@
   color: var(--other-text);
 }
 
+.delegation.vacant {
+  opacity: 0.6;
+}
+
 .delegation.divided {
   background: var(--present-soft);
 }

@@ -12,11 +12,7 @@ export const CAUCUSES = {
   CBC: { name: "Congressional Black Caucus" },
   CHC: { name: "Congressional Hispanic Caucus" },
   CPC: { name: "Progressive Caucus" },
-  HFC: { name: "Freedom Caucus" },
   NDC: { name: "New Democrat Coalition" },
-  PSC: { name: "Problem Solvers Caucus" },
-  RGG: { name: "Republican Governance Group" },
-  RSC: { name: "Republican Study Committee" },
 };
 
 export const STATE_NAMES = {
@@ -33,6 +29,10 @@ export const STATE_NAMES = {
   DC: "District of Columbia", PR: "Puerto Rico", GU: "Guam", VI: "U.S. Virgin Islands",
   AS: "American Samoa", MP: "Northern Mariana Islands",
 };
+
+/** DC and the territories: represented by delegates, not counted as states. */
+export const TERRITORIES = ["DC", "PR", "GU", "VI", "AS", "MP"];
+export const STATES = Object.keys(STATE_NAMES).filter((code) => !TERRITORIES.includes(code));
 
 export const STORAGE_KEY = "whip-tracker:v2";
 export const LEGACY_STORAGE_KEY = "whip-tracker-members";

@@ -3,7 +3,7 @@ import { CAUCUSES, PARTIES, VOTE_OPTIONS } from "../constants";
 import { Check } from "./Icons";
 import "./MemberCard.css";
 
-const photoUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+const photoUrl = (id) => `${import.meta.env.BASE_URL}members/${id}.webp`;
 
 function initials(name) {
   const parts = name.split(" ").filter((part) => /^[A-Za-zÀ-ÿ]/.test(part));
@@ -12,7 +12,7 @@ function initials(name) {
 
 function Avatar({ member }) {
   const [failed, setFailed] = useState(false);
-  if (!member.photo || failed) {
+  if (failed) {
     return (
       <span className="avatar monogram" aria-hidden="true">
         {initials(member.name)}
@@ -22,7 +22,7 @@ function Avatar({ member }) {
   return (
     <img
       className="avatar"
-      src={photoUrl(member.photo)}
+      src={photoUrl(member.id)}
       alt=""
       loading="lazy"
       decoding="async"
@@ -33,7 +33,7 @@ function Avatar({ member }) {
 
 function MemberCard({ member, vote, labels, selected, selectionActive, onToggleSelect, onVote }) {
   const options = VOTE_OPTIONS.filter((option) => labels[option]);
-  const district = member.delegate ? `${member.district.split("-")[0]} · Delegate` : member.district;
+  const district = member.delegate ? `${member.district.split("-")[0]} · ${member.role ?? "Delegate"}` : member.district;
 
   const toggle = (event) => onToggleSelect(member.id, event.shiftKey);
 

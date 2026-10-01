@@ -29,6 +29,20 @@ npm run deploy   # build and publish to GitHub Pages
 
 ## Data
 
-`src/data/members.json` is the roster. Positions are saved in the browser separately,
-so editing the roster never loses them. Members with `"delegate": true` only vote in the
-Committee of the Whole when "Delegates vote" is on.
+- **Roster** (`src/data/members.json`) comes from the House Clerk's member list and
+  official photos. Refresh it after special elections or resignations:
+
+  ```bash
+  npm run roster
+  ```
+
+  It rewrites the roster, downloads photos for new members into `public/members/`, and
+  removes photos of members who left. Nicknames come from the congress-legislators
+  project; anything still too formal goes in `NAME_OVERRIDES` in
+  `scripts/build-roster.mjs`.
+- **Caucuses** (`src/data/caucuses.json`) are kept by hand: Bioguide ID → name. Add or
+  remove a line to change membership; `npm test` flags anyone who's no longer on the
+  roster. Taken from each caucus's site (CAPAC: full members only, not associates).
+- Members are keyed by Bioguide ID. Positions are saved in the browser separately, so
+  roster updates never lose them. Delegates only vote in the Committee of the Whole when
+  "Delegates vote" is on.

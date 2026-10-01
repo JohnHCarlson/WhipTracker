@@ -6,6 +6,11 @@
 // "Votes needed" always assumes the worst case: every undecided member shows up
 // and votes. Present votes and absences can only lower the bar.
 
+import { STATES } from "../constants";
+
+/** Seats in the House. Fixed-majority thresholds (218) never drop for vacancies. */
+export const HOUSE_SEATS = 435;
+
 export const VOTE_TYPE_GROUPS = [
   { id: "majority", label: "Majority" },
   { id: "two-thirds", label: "Two-thirds" },
@@ -165,8 +170,8 @@ function neededFor(rule, total, present) {
   const voting = total - present;
   if (rule === "majority") return Math.floor(voting / 2) + 1;
   if (rule === "two-thirds") return Math.max(1, Math.ceil((2 * voting) / 3));
-  // full-membership: a fixed majority of everyone, however many show up.
-  return Math.floor(total / 2) + 1;
+  // full-membership: a majority of all 435 seats, however many are filled or show up.
+  return Math.floor(HOUSE_SEATS / 2) + 1;
 }
 
 // `reachable` is the most yes could still get: yes plus everything not yet locked.
@@ -235,7 +240,8 @@ function yesCanCarry({ yes, no, other, undecided }) {
 }
 
 function stateTally(members, votes, type) {
-  const byState = new Map();
+  // Every state gets a vote, even one whose whole delegation is vacant.
+  const byState = new Map(STATES.map((state) => [state, []]));
   for (const member of members) {
     const state = stateOf(member);
     if (!byState.has(state)) byState.set(state, []);
@@ -244,11 +250,11 @@ function stateTally(members, votes, type) {
 
   const delegations = Array.from(byState, ([state, stateMembers]) => {
     const counts = countVotes(stateMembers, votes, type);
-    return { state, counts, result: delegationResult(counts) };
+    return { state, counts, result: stateMembers.length === 0 ? "vacant" : delegationResult(counts) };
   });
 
   const counts = { yes: 0, no: 0, other: 0, present: 0, undecided: 0 };
-  const bucket = { yes: "yes", no: "no", other: "other", divided: "present", open: "undecided" };
+  const bucket = { yes: "yes", no: "no", other: "other", divided: "present", vacant: "present", open: "undecided" };
   let stillPossible = 0;
   for (const delegation of delegations) {
     counts[bucket[delegation.result]] += 1;
@@ -261,7 +267,7 @@ function stateTally(members, votes, type) {
   if (counts.present > 0) {
     notes.push({
       tone: "info",
-      text: `${counts.present} divided ${counts.present === 1 ? "delegation counts" : "delegations count"} against everyone. The bar stays at ${needed}.`,
+      text: `${counts.present} divided or vacant ${counts.present === 1 ? "delegation counts" : "delegations count"} against everyone. The bar stays at ${needed}.`,
     });
   }
 

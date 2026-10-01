@@ -87,6 +87,10 @@ describe("two-thirds of those voting", () => {
 });
 
 describe("discharge petition", () => {
+  it("stays at 218 with vacancies", () => {
+    expect(tally("discharge-petition", 433, {}).needed).toBe(218);
+  });
+
   it("needs a majority of the full membership regardless of present or absence", () => {
     const result = tally("discharge-petition", 435, { yes: 217, present: 20 });
     expect(result.needed).toBe(218);
@@ -127,7 +131,7 @@ describe("contingent election", () => {
     expect(delegationResult({ yes: 1, no: 1, other: 4, undecided: 0 })).toBe("other");
   });
 
-  it("counts states, and divided states count against", () => {
+  it("counts all 50 states; divided and vacant ones count against", () => {
     const ny = roster(5, { yes: 3, no: 2 }, { state: "NY" });
     const ct = roster(4, { yes: 2, no: 2 }, { state: "CT", idStart: 50 });
     const pa = roster(3, { yes: 1 }, { state: "PA", idStart: 80 });
@@ -136,9 +140,11 @@ describe("contingent election", () => {
       { ...ny.votes, ...ct.votes, ...pa.votes },
       getVoteType("contingent-election"),
     );
-    expect(result.total).toBe(3);
-    expect(result.needed).toBe(2);
-    expect(result.counts).toEqual({ yes: 1, no: 0, other: 0, present: 1, undecided: 1 });
-    expect(result.status).toBe("open");
+    expect(result.total).toBe(50);
+    expect(result.needed).toBe(26);
+    // NY for A, CT divided, PA in play, the other 47 have no members in this roster.
+    expect(result.counts).toEqual({ yes: 1, no: 0, other: 0, present: 48, undecided: 1 });
+    expect(result.delegations.find((d) => d.state === "WY").result).toBe("vacant");
+    expect(result.status).toBe("defeated");
   });
 });

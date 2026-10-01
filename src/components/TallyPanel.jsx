@@ -94,7 +94,7 @@ function CandidateFields({ type, names, onChange }) {
 }
 
 function Delegations({ delegations, labels }) {
-  const resultText = { yes: labels.yes, no: labels.no, other: labels.other, divided: "Divided", open: "In play" };
+  const resultText = { yes: labels.yes, no: labels.no, other: labels.other, divided: "Divided", vacant: "Vacant", open: "In play" };
   return (
     <div className="delegations">
       <span className="delegations-title">Delegations</span>

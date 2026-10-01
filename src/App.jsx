@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import members from "./data/members.json";
+import { memberIds, members } from "./data/roster";
 import AppHeader from "./components/AppHeader";
 import FilterPanel from "./components/FilterPanel";
 import MemberCard from "./components/MemberCard";
@@ -22,6 +22,9 @@ import {
 
 const NO_NAMES = [];
 
+// Saved votes for anyone no longer on the roster (or from the old test roster) are dropped.
+const knownVotes = (votes) => Object.fromEntries(Object.entries(votes).filter(([id]) => memberIds.has(id)));
+
 function tokenLabel(facet, value, labels) {
   if (facet === "position") return labels[value];
   if (facet === "party") return PARTIES[value]?.name ?? value;
@@ -31,7 +34,7 @@ function tokenLabel(facet, value, labels) {
 
 function App() {
   const [saved] = useState(loadSaved);
-  const { votes, setVotes, clearAll, undo, redo, canUndo, canRedo } = useVoteHistory(saved.votes);
+  const { votes, setVotes, clearAll, undo, redo, canUndo, canRedo } = useVoteHistory(knownVotes(saved.votes));
   const [voteTypeId, setVoteTypeId] = useState(saved.settings.voteType ?? DEFAULT_VOTE_TYPE_ID);
   const [delegatesVote, setDelegatesVote] = useState(saved.settings.delegatesVote ?? false);
   const [theme, setTheme] = useState(saved.settings.theme ?? "light");
@@ -187,8 +190,14 @@ function App() {
   const clearFilters = () => changeFilters(EMPTY_FILTERS);
   const setCandidateNamesForType = (next) => setCandidateNames((current) => ({ ...current, [type.id]: next }));
 
+  // The key handler reads state through a ref so a shortcut pressed right after a filter
+  // click sees that click's selection, not the one from before the re-render.
+  const keyState = useRef(null);
+  keyState.current = { selected, sheetOpen, labels, shortcutVotes, applyToSelection };
+
   useEffect(() => {
     const onKey = (event) => {
+      const { selected, sheetOpen, labels, shortcutVotes, applyToSelection } = keyState.current;
       const typing = event.target.closest?.("input, textarea, select, [contenteditable='true']");
       const mod = event.metaKey || event.ctrlKey;
       const key = event.key.toLowerCase();
@@ -232,7 +241,7 @@ function App() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [undo, redo, selectAll, deselectAll, applyToSelection, selected, sheetOpen, labels, shortcutVotes]);
+  }, [undo, redo, selectAll, deselectAll]);
 
   const sharedVote = useMemo(() => {
     const positions = new Set([...selected].map((id) => effectiveVote(votes[id], type)));
