@@ -1,0 +1,138 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: var(--header-h);
+  border-width: 0 0 0.5px;
+}
+
+.app-header-inner {
+  max-width: 1320px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0;
+}
+
+.logo-tile {
+  fill: var(--text);
+}
+
+.logo-seat {
+  fill: none;
+  stroke-width: 3.2;
+}
+
+.logo-seat.yes {
+  stroke: var(--yes-bar);
+}
+
+.logo-seat.no {
+  stroke: var(--no-bar);
+}
+
+.logo-seat.open {
+  stroke: var(--bg);
+  stroke-opacity: 0.55;
+}
+
+.brand-name {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.mini-tally {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.mini-tally.shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.mini-tally-type {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.mini-tally .bar {
+  width: min(260px, 30vw);
+  flex-shrink: 1;
+}
+
+.mini-tally-score {
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mini-tally-of {
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.header-divider {
+  width: 0.5px;
+  height: 20px;
+  margin: 0 6px;
+  background: var(--separator);
+}
+
+@media (max-width: 760px) {
+  .brand-name,
+  .mini-tally-type {
+    display: none;
+  }
+
+  .app-header-inner {
+    padding: 0 12px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .mini-tally .status-pill {
+    display: none;
+  }
+}

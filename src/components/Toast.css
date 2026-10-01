@@ -1,0 +1,22 @@
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-float);
+  font-size: 14px;
+  white-space: nowrap;
+  animation: toast-in 0.25s var(--ease);
+}
+
+.toast .link-button {
+  font-weight: 600;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

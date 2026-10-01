@@ -1,40 +1,99 @@
+import { memo, useState } from "react";
+import { CAUCUSES, PARTIES, VOTE_OPTIONS } from "../constants";
+import { Check } from "./Icons";
 import "./MemberCard.css";
-import { voteLabels, voteOrder } from "../constants";
 
-function MemberCard({ member, isSelected, toggleSelection, changeVote, clearVote }) {
+const photoUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+
+function initials(name) {
+  const parts = name.split(" ").filter((part) => /^[A-Za-zÀ-ÿ]/.test(part));
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+}
+
+function Avatar({ member }) {
+  const [failed, setFailed] = useState(false);
+  if (!member.photo || failed) {
+    return (
+      <span className="avatar monogram" aria-hidden="true">
+        {initials(member.name)}
+      </span>
+    );
+  }
   return (
-    <article key={member.id} className={isSelected ? "member-card selected" : "member-card"}>
-      <div className="member-top">
-        <img src={member.photo} alt={member.name} />
-        <div className="member-info">
-          <h3>{member.name}</h3>
-          <div className="member-meta">
-            <span className="member-district">{member.district}</span>
-            <span className={member.party === "D" ? "tag party blue" : "tag party red"}>{member.party}</span>
-          </div>
+    <img
+      className="avatar"
+      src={photoUrl(member.photo)}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+function MemberCard({ member, vote, labels, selected, selectionActive, onToggleSelect, onVote }) {
+  const options = VOTE_OPTIONS.filter((option) => labels[option]);
+  const district = member.delegate ? `${member.district.split("-")[0]} · Delegate` : member.district;
+
+  const toggle = (event) => onToggleSelect(member.id, event.shiftKey);
+
+  return (
+    <article
+      className={`member ${vote ?? "undecided"}${selected ? " selected" : ""}${selectionActive ? " selecting" : ""}`}
+      onClick={(event) => {
+        if (event.target.closest("button")) return;
+        toggle(event);
+      }}
+    >
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={selected}
+        aria-label={`Select ${member.name}`}
+        className="select-toggle"
+        onClick={toggle}
+      >
+        <Check width={14} height={14} strokeWidth={2.4} />
+      </button>
+
+      <div className="member-head">
+        <div className="avatar-ring">
+          <Avatar member={member} />
         </div>
-        <label className="checkbox-pill" aria-label={`Select ${member.name}`}>
-          <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(member.id)} />
-          <span></span>
-        </label>
+        <div className="member-id">
+          <h3 className="member-name">{member.name}</h3>
+          <p className="member-meta">
+            <span className={`party-dot party-${member.party}`} aria-hidden="true" />
+            <span title={PARTIES[member.party]?.name}>{member.party}</span>
+            <span aria-hidden="true">·</span>
+            <span>{district}</span>
+          </p>
+        </div>
       </div>
 
-      <div className="tag-row">
+      <ul className="member-tags" aria-label="Caucuses">
         {member.groups.map((group) => (
-          <span className="tag affiliation-tag" key={group}>
+          <li key={group} title={CAUCUSES[group]?.name}>
             {group}
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
 
-      <div className="vote-row">
-        {voteOrder.map((vote) => (
+      <div
+        className={`segmented${options.length > 3 ? " dense" : ""}`}
+        role="group"
+        aria-label={`Position for ${member.name}`}
+      >
+        {options.map((option) => (
           <button
-            key={vote}
-            className={`${member.vote === vote ? "vote-pill active" : "vote-pill"} vote-pill-${vote}`}
-            onClick={() => (member.vote === vote ? clearVote(member.id) : changeVote(member.id, vote))}
+            type="button"
+            key={option}
+            className={`segment ${option}`}
+            aria-pressed={vote === option}
+            onClick={() => onVote(member.id, vote === option ? null : option)}
+            title={labels[option]}
           >
-            {voteLabels[vote]}
+            {labels[option]}
           </button>
         ))}
       </div>
@@ -42,4 +101,4 @@ function MemberCard({ member, isSelected, toggleSelection, changeVote, clearVote
   );
 }
 
-export default MemberCard;
+export default memo(MemberCard);

@@ -1,0 +1,163 @@
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.filter-panel-head h2 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.facet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 4px;
+}
+
+.facet-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  border-radius: 4px;
+}
+
+.facet-title:hover {
+  color: var(--text-2);
+}
+
+.facet-title svg {
+  transition: transform 0.2s var(--ease);
+}
+
+.facet-title svg.collapsed {
+  transform: rotate(-90deg);
+}
+
+.facet-clear {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--accent-text);
+  border-radius: 4px;
+}
+
+.facet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.facet-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 14px;
+  transition: background-color 0.12s ease;
+}
+
+.facet-row:hover {
+  background: var(--fill-subtle);
+}
+
+.facet-row.on {
+  background: var(--accent-soft);
+}
+
+.facet-row.is-empty {
+  opacity: 0.45;
+}
+
+.facet-check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid var(--text-3);
+  color: #fff;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.facet-row.on .facet-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.facet-swatch {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fill-hover);
+}
+
+.facet-swatch.vote-yes {
+  background: var(--yes-bar);
+}
+
+.facet-swatch.vote-no {
+  background: var(--no-bar);
+}
+
+.facet-swatch.vote-present {
+  background: var(--present-bar);
+}
+
+.facet-swatch.vote-other {
+  background: var(--other-bar);
+}
+
+.facet-swatch.party-D {
+  background: var(--party-D);
+}
+
+.facet-swatch.party-R {
+  background: var(--party-R);
+}
+
+.facet-swatch.party-I {
+  background: var(--party-I);
+}
+
+.facet-label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.facet-detail {
+  font-size: 12px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.facet-count {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
