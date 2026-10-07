@@ -1,19 +1,24 @@
-// Rebuilds src/data/members.json from the House Clerk's member list and downloads
-// official photos into public/members/. Caucus membership is hand-kept in
-// src/data/caucuses.json and isn't touched here.
+// Rebuilds the roster from the House Clerk:
+//   src/data/members.json       member list (MemberData.xml)
+//   src/data/associations.json  the Clerk's "Demographics" lists (one PDF per list)
+//   public/members/             official photos, resized
+// Caucus membership is hand-kept in src/data/caucuses.json and isn't touched here.
 //
-//   npm run roster            refresh the roster, fetch photos that are missing
+//   npm run roster            refresh everything, fetch photos that are missing
 //   npm run roster -- --photos-only / --force-photos
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import sharp from "sharp";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const MEMBERS_JSON = join(ROOT, "src/data/members.json");
+const ASSOCIATIONS_JSON = join(ROOT, "src/data/associations.json");
 const PHOTO_DIR = join(ROOT, "public/members");
 const CLERK_XML = "https://clerk.house.gov/xml/lists/MemberData.xml";
+const DEMOGRAPHICS = "https://clerk.house.gov/Members/ViewDemographics";
 const LEGISLATORS = "https://unitedstates.github.io/congress-legislators/legislators-current.json";
 const PHOTO_URL = (id) => `https://clerk.house.gov/images/members/${id}.jpg`;
 const PHOTO_SIZE = 144; // shown at 48px, so 3x for sharp screens
@@ -57,6 +62,33 @@ const NAME_OVERRIDES = {
   V000138: "Eugene Vindman",
   W000804: "Rob Wittman",
 };
+
+// Clerk demographic list (link text) -> association key. Several lists can share a key.
+// Labels live in src/constants.js. Deceased, Resigned and Salary aren't about sitting
+// members; Women State repeats Women Alpha; Dean is a single person.
+const ASSOCIATION_LISTS = {
+  "freshmen": "freshmen",
+  "retiring": "leaving",
+  "running for other office": "leaving",
+  "primary defeats": "leaving",
+  "non consecutive service": "non-consecutive",
+  "women alpha": "women",
+  "military veterans": "veterans",
+  "purple heart recipients": "purple-heart",
+  "military academy": "service-academy",
+  "foreign born": "foreign-born",
+  "former mayors": "former-mayors",
+  "lawyers": "lawyers",
+  "educators": "educators",
+  "medical professionals": "medical",
+  "engineers": "engineers",
+  "accountants": "accountants",
+  "m.b.a. holders": "mba",
+  "doctoral degrees": "doctorates",
+  "prestigious scholars": "scholars",
+};
+const ASSOCIATION_KEYS = [...new Set(Object.values(ASSOCIATION_LISTS))];
+const SKIPPED_LISTS = new Set(["deceased", "resigned", "salary", "women state", "dean"]);
 
 // The Clerk uses AQ for American Samoa; everything else uses AS.
 const STATE_FIXES = { AQ: "AS" };
@@ -170,7 +202,110 @@ async function fetchPhotos(members) {
   if (missing.length) console.log(`No official photo yet (initials shown instead): ${missing.join(", ")}`);
 }
 
+const STATE_CODES = {
+  Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA", Colorado: "CO",
+  Connecticut: "CT", Delaware: "DE", Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID",
+  Illinois: "IL", Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA",
+  Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN",
+  Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV",
+  "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY",
+  "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK", Oregon: "OR",
+  Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD",
+  Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT", Virginia: "VA", Washington: "WA",
+  "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY", "District of Columbia": "DC",
+  "Puerto Rico": "PR", Guam: "GU", "Virgin Islands": "VI", "American Samoa": "AS",
+  "Northern Mariana Islands": "MP",
+};
+const TERRITORY_CODES = new Set(["DC", "PR", "GU", "VI", "AS", "MP"]);
+const fold = (text) => text.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+/** Text lines of a PDF, rebuilt from its positioned text runs. */
+async function pdfLines(buffer) {
+  const pdf = await getDocument({ data: new Uint8Array(buffer), verbosity: 0 }).promise;
+  const lines = [];
+  for (let n = 1; n <= pdf.numPages; n++) {
+    const { items } = await (await pdf.getPage(n)).getTextContent();
+    // Group runs into rows top to bottom; runs on one row can sit a point or so apart.
+    const rows = [];
+    for (const item of items.filter((i) => i.str.trim()).sort((a, b) => b.transform[5] - a.transform[5])) {
+      const last = rows.at(-1);
+      if (last && last.y - item.transform[5] <= 2) last.items.push(item);
+      else rows.push({ y: item.transform[5], items: [item] });
+    }
+    for (const { items: runs } of rows) {
+      const row = runs.sort((a, b) => a.transform[4] - b.transform[4]);
+      // Runs that touch belong to one word: district "08" arrives as "0" and "8".
+      let text = "";
+      row.forEach((item, i) => {
+        const prev = row[i - 1];
+        const gap = prev ? item.transform[4] - (prev.transform[4] + prev.width) : 0;
+        text += (prev && gap > 0.5 ? " " : "") + item.str;
+      });
+      lines.push(text.replace(/\s+/g, " ").trim());
+    }
+  }
+  return lines;
+}
+
+// "12. Ocasio-Cortez, Alexandria Democrat New York 14"
+const stateAlternatives = Object.keys(STATE_CODES).sort((a, b) => b.length - a.length).join("|");
+const ROW = new RegExp(
+  `^\\d+\\.\\s+(.+?)\\s+(?:Republican|Democrat|Independent)\\s+(${stateAlternatives})\\b\\s*(\\d{1,2}\\b|At[- ]Large|Delegate|Resident Commissioner)?`,
+  "i",
+);
+
+async function buildAssociations(members) {
+  const bySeat = new Map(members.map((member) => [member.district, member]));
+  const page = await get(DEMOGRAPHICS);
+  const links = [...page.matchAll(/<a href="([^"]+\.pdf)"[^>]*>([^<]+)<\/a>/g)].map(([, href, label]) => ({
+    url: new URL(href, DEMOGRAPHICS).href,
+    label: label.replace(/\s+/g, " ").trim().toLowerCase(),
+  }));
+
+  const found = Object.fromEntries(ASSOCIATION_KEYS.map((key) => [key, new Set()]));
+  const seen = new Set();
+  const notes = [];
+  for (const { url, label } of links) {
+    const key = ASSOCIATION_LISTS[label];
+    if (!key) {
+      if (!SKIPPED_LISTS.has(label)) notes.push(`new Clerk list not imported: "${label}"`);
+      continue;
+    }
+    seen.add(label);
+    const unmatched = [];
+    for (const line of await pdfLines(await get(url, "buffer"))) {
+      if (/^UNITED STATES SENATE/i.test(line)) break; // the Women list ends with senators
+      const row = line.match(ROW);
+      if (!row) continue;
+      const state = STATE_CODES[Object.keys(STATE_CODES).find((name) => name.toLowerCase() === row[2].toLowerCase())];
+      const district = /^\d+$/.test(row[3] ?? "") ? row[3].padStart(2, "0") : "AL";
+      const member = bySeat.get(`${state}-${district}`);
+      // Confirm the seat holder by last name ("Ocasio-Cortez, Alexandria" -> "cortez").
+      const lastWord = fold(row[1].split(",")[0]).split(/[\s-]/).pop();
+      if (member && fold(member.name).includes(lastWord)) found[key].add(member);
+      else unmatched.push(`${row[1]} (${state}-${district})`);
+    }
+    if (unmatched.length) notes.push(`${label}: no sitting member for ${unmatched.join("; ")}`);
+  }
+
+  const missing = Object.keys(ASSOCIATION_LISTS).filter((label) => !seen.has(label));
+  if (missing.length) notes.push(`not on the Clerk page this time: ${missing.join(", ")}`);
+
+  // Roster order (state, then district) so merged lists read cleanly.
+  const order = new Map(members.map((member, i) => [member.id, i]));
+  const body = ASSOCIATION_KEYS.map((key) => {
+    const lines = [...found[key]]
+      .sort((a, b) => order.get(a.id) - order.get(b.id))
+      .map((member) => `    ${JSON.stringify(member.id)}: ${JSON.stringify(`${member.name} (${member.district})`)}`);
+    return `  ${JSON.stringify(key)}: {\n${lines.join(",\n")}\n  }`;
+  });
+  writeFileSync(ASSOCIATIONS_JSON, `{\n${body.join(",\n")}\n}\n`);
+  console.log(`Associations: ${ASSOCIATION_KEYS.map((key) => `${key} ${found[key].size}`).join(", ")}`);
+  for (const note of notes) console.log(`  ! ${note}`);
+}
+
 const members = args.has("--photos-only")
   ? JSON.parse(readFileSync(MEMBERS_JSON, "utf8"))
   : await buildRoster();
+if (!args.has("--photos-only")) await buildAssociations(members);
 await fetchPhotos(members);

@@ -12,7 +12,29 @@ export const CAUCUSES = {
   CBC: { name: "Congressional Black Caucus" },
   CHC: { name: "Congressional Hispanic Caucus" },
   CPC: { name: "Progressive Caucus" },
+  DSA: { name: "Democratic Socialists of America" },
   NDC: { name: "New Democrat Coalition" },
+};
+
+/** The House Clerk's member demographics, in filter order. Filter-only; not shown on cards. */
+export const ASSOCIATIONS = {
+  freshmen: "Freshmen",
+  leaving: "Leaving office",
+  "non-consecutive": "Non-consecutive service",
+  women: "Women",
+  veterans: "Military veterans",
+  "purple-heart": "Purple Heart recipients",
+  "service-academy": "Service academy graduates",
+  "foreign-born": "Foreign born",
+  "former-mayors": "Former mayors",
+  lawyers: "Lawyers",
+  educators: "Educators",
+  medical: "Medical professionals",
+  engineers: "Engineers",
+  accountants: "Accountants",
+  mba: "MBA holders",
+  doctorates: "Doctoral degrees",
+  scholars: "Rhodes and other prestigious scholars",
 };
 
 export const STATE_NAMES = {

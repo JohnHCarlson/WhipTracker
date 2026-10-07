@@ -40,9 +40,16 @@ npm run deploy   # build and publish to GitHub Pages
   removes photos of members who left. Nicknames come from the congress-legislators
   project; anything still too formal goes in `NAME_OVERRIDES` in
   `scripts/build-roster.mjs`.
+- **Member associations** (`src/data/associations.json`) are the Clerk's
+  [Demographics](https://clerk.house.gov/Members#Demographics) lists (freshmen, veterans,
+  women, lawyers, ...), refreshed by the same `npm run roster`. "Leaving office" combines
+  the Clerk's Retiring, Running for Other Office and Primary Defeats lists. They're
+  filters only and don't appear on cards.
 - **Caucuses** (`src/data/caucuses.json`) are kept by hand: Bioguide ID → name. Add or
   remove a line to change membership; `npm test` flags anyone who's no longer on the
   roster. Taken from each caucus's site (CAPAC: full members only, not associates).
+  DSA covers members who are DSA members or endorsees, plus former members DSA backed
+  (Summer Lee, Greg Casar).
 - Members are keyed by Bioguide ID. Positions are saved in the browser separately, so
   roster updates never lose them. Delegates only vote in the Committee of the Whole when
   "Delegates vote" is on.

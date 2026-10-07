@@ -1,11 +1,11 @@
-import { CAUCUSES, PARTIES, STATE_NAMES } from "../constants";
+import { ASSOCIATIONS, CAUCUSES, PARTIES, STATE_NAMES } from "../constants";
 import { effectiveVote, stateOf } from "./voteTypes";
 
 // Facets combine the way most filter UIs do: any-of within a facet, all-of across
 // facets. "CPC" + "CBC" + "New York" means (CPC or CBC) and from New York.
-export const FACETS = ["position", "party", "caucus", "state"];
+export const FACETS = ["position", "party", "caucus", "association", "state"];
 
-export const EMPTY_FILTERS = { query: "", position: [], party: [], caucus: [], state: [] };
+export const EMPTY_FILTERS = { query: "", position: [], party: [], caucus: [], association: [], state: [] };
 
 export function hasActiveFilters(filters) {
   return filters.query.trim() !== "" || FACETS.some((facet) => filters[facet].length > 0);
@@ -20,6 +20,8 @@ function facetValues(member, facet, ctx) {
       return [member.party];
     case "caucus":
       return member.groups;
+    case "association":
+      return member.associations;
     case "state":
       return [stateOf(member)];
     default:
@@ -72,6 +74,10 @@ export function facetOptions(members, filters, ctx, facet, countCtx = ctx) {
     universe = Array.from(all);
     if (facet === "party") universe.sort((a, b) => Object.keys(PARTIES).indexOf(a) - Object.keys(PARTIES).indexOf(b));
     else if (facet === "caucus") universe.sort((a, b) => (CAUCUSES[a]?.name ?? a).localeCompare(CAUCUSES[b]?.name ?? b));
+    else if (facet === "association") {
+      const order = Object.keys(ASSOCIATIONS);
+      universe.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    }
     else universe.sort((a, b) => (STATE_NAMES[a] ?? a).localeCompare(STATE_NAMES[b] ?? b));
   }
 

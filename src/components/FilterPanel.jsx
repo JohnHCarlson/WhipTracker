@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CAUCUSES, PARTIES, STATE_NAMES } from "../constants";
+import { ASSOCIATIONS, CAUCUSES, PARTIES, STATE_NAMES } from "../constants";
 import { facetOptions, hasActiveFilters } from "../lib/filters";
 import { Check, ChevronDown } from "./Icons";
 import "./FilterPanel.css";
@@ -75,6 +75,11 @@ function FilterPanel({ members, filters, ctx, countCtx, labels, onToggle, onClea
       facet: "caucus",
       title: "Caucus",
       describe: (value) => ({ label: value, detail: CAUCUSES[value]?.name }),
+    },
+    {
+      facet: "association",
+      title: "Member associations",
+      describe: (value) => ({ label: ASSOCIATIONS[value] ?? value }),
     },
     {
       facet: "state",

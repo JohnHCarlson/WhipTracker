@@ -7,7 +7,7 @@ import SelectionBar, { shortcutsFor } from "./components/SelectionBar";
 import TallyPanel from "./components/TallyPanel";
 import Toast from "./components/Toast";
 import { Close, Filter, Search } from "./components/Icons";
-import { PARTIES, STATE_NAMES } from "./constants";
+import { ASSOCIATIONS, PARTIES, STATE_NAMES } from "./constants";
 import { EMPTY_FILTERS, FACETS, filterMembers, hasActiveFilters, toggleFilterValue } from "./lib/filters";
 import { loadSaved, save } from "./lib/storage";
 import { useVoteHistory } from "./lib/useVoteHistory";
@@ -29,6 +29,7 @@ function tokenLabel(facet, value, labels) {
   if (facet === "position") return labels[value];
   if (facet === "party") return PARTIES[value]?.name ?? value;
   if (facet === "state") return STATE_NAMES[value] ?? value;
+  if (facet === "association") return ASSOCIATIONS[value] ?? value;
   return value;
 }
 
