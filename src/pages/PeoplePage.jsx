@@ -311,8 +311,6 @@ function PeoplePage({ theme, onToggleTheme }) {
         )}
         <p className="form-note">
           Sign-in links work once and last {INVITE_DAYS} days. A new password link doesn’t change anything until it’s used.
-          {apps.some((app) => app.id === "election-night") &&
-            " Election Night still has its own accounts until it moves over, so access to it set here doesn’t do anything there yet."}
         </p>
       </main>
 

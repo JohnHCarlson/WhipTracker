@@ -56,9 +56,6 @@ that person's ⋯ menu.
 - **Admin:** also sees and edits every vote, and manages people.
 - **Owner** (John): manages everyone, in every app.
 
-Election Night still has its own accounts until it moves over to the shared
-ones.
-
 ## Running it
 
 In PowerShell, type `npm.cmd`, not `npm`. This laptop's execution policy
