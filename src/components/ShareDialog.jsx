@@ -64,7 +64,7 @@ function ShareDialog({ vote, open, onClose, onChanged }) {
       onClose={onClose}
       wide
       title={`Share “${vote.title}”`}
-      description="People you add find it in their list of votes. Admins can see every vote."
+      description="People you add find it in their list of votes."
     >
       <form className="share-add" onSubmit={add}>
         <select className="select share-person" value={adding} onChange={(e) => setAdding(e.target.value)} aria-label="Person to add" disabled={!directory}>
