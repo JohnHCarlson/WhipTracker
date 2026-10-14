@@ -1,0 +1,37 @@
+# The Whip Tracker, installed as /etc/systemd/system/whip-tracker.service.
+# Logs: journalctl -u whip-tracker -f
+
+[Unit]
+Description=Whip Tracker (votes.jcvc.io)
+After=network.target accounts.service
+Wants=accounts.service
+
+[Service]
+User=whip-tracker
+Group=whip-tracker
+EnvironmentFile=/etc/whip-tracker.env
+# `current` points at the newest release; each deploy switches it and restarts.
+WorkingDirectory=/srv/whip-tracker/current
+ExecStart=/usr/bin/node dist-server/server.mjs
+Restart=always
+RestartSec=2
+
+# The database and backups live in /var/lib/whip-tracker, the only place the app can write.
+StateDirectory=whip-tracker
+StateDirectoryMode=0750
+# It only talks to Caddy and the accounts service, both on this machine.
+IPAddressAllow=localhost
+IPAddressDeny=any
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

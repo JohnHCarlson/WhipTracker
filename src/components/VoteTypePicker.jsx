@@ -3,7 +3,7 @@ import { VOTE_TYPES, VOTE_TYPE_GROUPS } from "../lib/voteTypes";
 import { Check, ChevronDown } from "./Icons";
 import "./VoteTypePicker.css";
 
-function VoteTypePicker({ value, onChange }) {
+function VoteTypePicker({ value, onChange, disabled = false }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const menuRef = useRef(null);
@@ -52,10 +52,11 @@ function VoteTypePicker({ value, onChange }) {
         className="picker-button"
         aria-haspopup="menu"
         aria-expanded={open}
+        disabled={disabled}
         onClick={() => setOpen((isOpen) => !isOpen)}
       >
         <span className="picker-value">{current.name}</span>
-        <ChevronDown className="picker-chevron" />
+        {!disabled && <ChevronDown className="picker-chevron" />}
       </button>
 
       {open && (

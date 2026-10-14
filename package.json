@@ -4,25 +4,35 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
-    "test": "vitest run",
+    "dev": "concurrently -n accounts,api,web -c gray,blue,magenta \"npm:dev:accounts\" \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:accounts": "node scripts/dev-accounts.mjs",
+    "dev:api": "node --watch-path=server --watch-path=src/lib --import tsx server/index.ts",
+    "dev:web": "vite",
+    "build": "vite build && npm run build:server",
+    "build:server": "esbuild server/index.ts --bundle --platform=node --format=esm --target=node24 --outfile=dist-server/server.mjs --log-level=warning",
+    "start": "node dist-server/server.mjs",
+    "typecheck": "tsc -p tsconfig.server.json",
+    "test": "vitest run && tsx --test server/*.test.ts",
+    "deploy": "node scripts/deploy.mjs",
     "roster": "node scripts/build-roster.mjs"
   },
   "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "@vitejs/plugin-react": "^4.3.1",
-    "gh-pages": "^6.3.0",
+    "concurrently": "^10.0.6",
+    "esbuild": "^0.28.2",
     "pdfjs-dist": "^4.10.38",
     "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
     "vite": "^5.4.10",
     "vitest": "^2.1.9"
-  },
-  "homepage": "https://votes.jcvc.io"
+  }
 }

@@ -1,0 +1,172 @@
+.people-page {
+  max-width: 1040px;
+}
+
+.people {
+  overflow: visible;
+}
+
+.person {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  padding: 14px 14px 14px 18px;
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.person:last-child {
+  border-bottom: 0;
+}
+
+.person-who {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.person-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.person-you {
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.person-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+
+.person-email {
+  font-size: 13px;
+  color: var(--text-2);
+  overflow-wrap: anywhere;
+}
+
+.person-status {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.person-status.warning {
+  color: var(--present-text);
+}
+
+.person-access {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.person-app {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.person-app-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.person-app .select {
+  width: 140px;
+}
+
+.add-access {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.add-access-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+
+.add-access-app {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-access-app input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.add-access-row .select {
+  width: 150px;
+}
+
+.invite-link {
+  display: flex;
+  gap: 8px;
+}
+
+.invite-link .input {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.role-help {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.role-help-row {
+  display: contents;
+}
+
+.role-help dt {
+  font-weight: 600;
+}
+
+.role-help dd {
+  margin: 0;
+  color: var(--text-2);
+}
+
+@media (max-width: 640px) {
+  .person {
+    padding: 14px 12px 14px 16px;
+  }
+
+  .person-access {
+    flex: 1;
+  }
+
+  .person-app {
+    flex: 1 1 140px;
+  }
+
+  .person-app .select {
+    width: 100%;
+  }
+
+  .invite-link {
+    flex-direction: column;
+  }
+}

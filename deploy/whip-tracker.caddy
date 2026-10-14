@@ -1,0 +1,16 @@
+# The Whip Tracker, installed as /etc/caddy/sites/whip-tracker.caddy.
+# Caddy gets the HTTPS certificate for this name itself, once the DNS record
+# points here. The app listens on 127.0.0.1:3102, which only this machine can reach.
+
+votes.jcvc.io {
+	# Live updates are a stream of small messages; compressing would hold them back.
+	@events path /api/events/*
+	handle @events {
+		reverse_proxy 127.0.0.1:3102
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy 127.0.0.1:3102
+	}
+}

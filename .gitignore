@@ -40,3 +40,7 @@ pnpm-debug.log*
 .eslintcache
 .vite/
 .parcel-cache
+# The local server database (accounts and votes) and its backups
+data/
+dist-server/
+release.tgz

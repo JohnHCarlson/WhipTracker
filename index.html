@@ -4,15 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Track where every Member of the House stands on a floor vote." />
+    <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Whip Tracker</title>
-    <script>
-      // Apply the saved theme before first paint so dark mode doesn't flash white.
-      try {
-        var saved = JSON.parse(localStorage.getItem("whip-tracker:v2") || "{}");
-        if (saved.settings && saved.settings.theme === "dark") document.documentElement.dataset.theme = "dark";
-      } catch (e) {}
-    </script>
+    <script src="/theme.js"></script>
   </head>
   <body>
     <div id="root"></div>

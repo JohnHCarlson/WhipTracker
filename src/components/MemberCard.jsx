@@ -31,7 +31,7 @@ function Avatar({ member }) {
   );
 }
 
-function MemberCard({ member, vote, labels, selected, selectionActive, onToggleSelect, onVote }) {
+function MemberCard({ member, vote, labels, readOnly = false, selected, selectionActive, onToggleSelect, onVote }) {
   const options = VOTE_OPTIONS.filter((option) => labels[option]);
   const district = member.delegate ? `${member.district.split("-")[0]} · ${member.role ?? "Delegate"}` : member.district;
 
@@ -39,22 +39,24 @@ function MemberCard({ member, vote, labels, selected, selectionActive, onToggleS
 
   return (
     <article
-      className={`member ${vote ?? "undecided"}${selected ? " selected" : ""}${selectionActive ? " selecting" : ""}`}
+      className={`member ${vote ?? "undecided"}${selected ? " selected" : ""}${selectionActive ? " selecting" : ""}${readOnly ? " read-only" : ""}`}
       onClick={(event) => {
-        if (event.target.closest("button")) return;
+        if (readOnly || event.target.closest("button")) return;
         toggle(event);
       }}
     >
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={selected}
-        aria-label={`Select ${member.name}`}
-        className="select-toggle"
-        onClick={toggle}
-      >
-        <Check width={14} height={14} strokeWidth={2.4} />
-      </button>
+      {!readOnly && (
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={selected}
+          aria-label={`Select ${member.name}`}
+          className="select-toggle"
+          onClick={toggle}
+        >
+          <Check width={14} height={14} strokeWidth={2.4} />
+        </button>
+      )}
 
       <div className="member-head">
         <div className="avatar-ring">
@@ -90,6 +92,7 @@ function MemberCard({ member, vote, labels, selected, selectionActive, onToggleS
             key={option}
             className={`segment ${option}`}
             aria-pressed={vote === option}
+            disabled={readOnly}
             onClick={() => onVote(member.id, vote === option ? null : option)}
             title={labels[option]}
           >

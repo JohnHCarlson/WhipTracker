@@ -125,3 +125,8 @@
     font-size: 24px;
   }
 }
+
+.picker-button:disabled {
+  cursor: default;
+  background: none;
+}

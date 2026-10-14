@@ -1,0 +1,3 @@
+# Scripts and config that run on the Linux droplet need Linux line endings.
+*.sh text eol=lf
+deploy/** text eol=lf

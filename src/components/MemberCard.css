@@ -242,3 +242,17 @@
   padding: 0 2px;
   font-size: 12px;
 }
+
+/* View-only: positions show, but nothing on the card responds. */
+.member.read-only {
+  cursor: default;
+}
+
+.segment:disabled {
+  cursor: default;
+}
+
+.member.read-only .segment:not([aria-pressed="true"]):hover {
+  color: var(--text-2);
+  background: none;
+}

@@ -1,0 +1,63 @@
+.share-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+}
+
+.share-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 0.5px solid var(--separator);
+}
+
+.share-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 0;
+  border-bottom: 0.5px solid var(--separator);
+}
+
+.share-who {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.share-name {
+  font-weight: 550;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-you {
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.share-email {
+  font-size: 13px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.share-role {
+  font-size: 14px;
+  color: var(--text-2);
+  padding-right: 44px;
+}
+
+@media (max-width: 640px) {
+  .share-add {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .share-person {
+    grid-column: 1 / -1;
+  }
+}

@@ -67,7 +67,7 @@ function Count({ kind, label, value, total }) {
   );
 }
 
-function CandidateFields({ type, names, onChange }) {
+function CandidateFields({ type, names, readOnly, onChange }) {
   const slots = ["yes", "no", "other"];
   return (
     <div className="candidates" role="group" aria-label="Candidates">
@@ -79,6 +79,7 @@ function CandidateFields({ type, names, onChange }) {
             value={names[i] ?? ""}
             placeholder={placeholder}
             maxLength={24}
+            readOnly={readOnly}
             spellCheck={false}
             aria-label={placeholder}
             onChange={(event) => {
@@ -117,7 +118,7 @@ function Delegations({ delegations, labels }) {
 }
 
 const TallyPanel = forwardRef(function TallyPanel(
-  { tally, type, labels, onTypeChange, delegatesVote, onDelegatesVoteChange, candidateNames, onCandidateNamesChange },
+  { tally, type, labels, readOnly = false, onTypeChange, delegatesVote, onDelegatesVoteChange, candidateNames, onCandidateNamesChange },
   ref,
 ) {
   const [showAbout, setShowAbout] = useState(false);
@@ -129,7 +130,7 @@ const TallyPanel = forwardRef(function TallyPanel(
       <div className="tally-head">
         <div className="tally-type">
           <span className="eyebrow">Vote type</span>
-          <VoteTypePicker value={type.id} onChange={onTypeChange} />
+          <VoteTypePicker value={type.id} onChange={onTypeChange} disabled={readOnly} />
           <div className="tally-type-actions">
             <button
               type="button"
@@ -147,6 +148,7 @@ const TallyPanel = forwardRef(function TallyPanel(
                   type="checkbox"
                   role="switch"
                   checked={delegatesVote}
+                  disabled={readOnly}
                   onChange={(event) => onDelegatesVoteChange(event.target.checked)}
                 />
                 <span className="switch-track" aria-hidden="true" />
@@ -165,7 +167,7 @@ const TallyPanel = forwardRef(function TallyPanel(
 
       {showAbout && <p className="about">{type.about}</p>}
 
-      {type.candidates && <CandidateFields type={type} names={candidateNames} onChange={onCandidateNamesChange} />}
+      {type.candidates && <CandidateFields type={type} names={candidateNames} readOnly={readOnly} onChange={onCandidateNamesChange} />}
 
       <ProgressBar tally={tally} type={type} labels={countLabels} />
 

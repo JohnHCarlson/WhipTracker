@@ -90,3 +90,73 @@ export const Warning = (props) => (
     <circle cx="10" cy="14.2" r="0.4" fill="currentColor" />
   </svg>
 );
+
+export const Plus = (props) => (
+  <svg {...base} {...props}>
+    <path d="M10 4.5v11M4.5 10h11" />
+  </svg>
+);
+
+export const ChevronLeft = (props) => (
+  <svg {...base} {...props}>
+    <path d="M12 5.5L7.5 10l4.5 4.5" />
+  </svg>
+);
+
+export const More = (props) => (
+  <svg {...base} {...props}>
+    <circle cx="5" cy="10" r="0.9" fill="currentColor" />
+    <circle cx="10" cy="10" r="0.9" fill="currentColor" />
+    <circle cx="15" cy="10" r="0.9" fill="currentColor" />
+  </svg>
+);
+
+export const People = (props) => (
+  <svg {...base} {...props}>
+    <circle cx="7.5" cy="7" r="2.75" />
+    <path d="M2.75 16a4.75 4.75 0 019.5 0" />
+    <path d="M12.5 4.6a2.75 2.75 0 010 4.8M14.25 11.6A4.75 4.75 0 0117.25 16" />
+  </svg>
+);
+
+export const Copy = (props) => (
+  <svg {...base} {...props}>
+    <rect x="7" y="7" width="9" height="9" rx="2" />
+    <path d="M13 4.5A1.5 1.5 0 0011.5 3h-6A2.5 2.5 0 003 5.5v6A1.5 1.5 0 004.5 13" />
+  </svg>
+);
+
+export const Trash = (props) => (
+  <svg {...base} {...props}>
+    <path d="M4 6h12M8 6V4.5h4V6M5.5 6l.75 10h7.5L14.5 6" />
+  </svg>
+);
+
+export const LinkIcon = (props) => (
+  <svg {...base} {...props}>
+    <path d="M8.5 11.5a3 3 0 004.25 0l2.5-2.5a3 3 0 00-4.25-4.25l-.75.75" />
+    <path d="M11.5 8.5a3 3 0 00-4.25 0l-2.5 2.5a3 3 0 004.25 4.25l.75-.75" />
+  </svg>
+);
+
+export const Eye = (props) => (
+  <svg {...base} {...props}>
+    <path d="M2.5 10s2.75-5 7.5-5 7.5 5 7.5 5-2.75 5-7.5 5-7.5-5-7.5-5z" />
+    <circle cx="10" cy="10" r="2.25" />
+  </svg>
+);
+
+export const SignOut = (props) => (
+  <svg {...base} {...props}>
+    <path d="M8 4H5.5A1.5 1.5 0 004 5.5v9A1.5 1.5 0 005.5 16H8" />
+    <path d="M12 6.5L15.5 10 12 13.5M15.5 10H8" />
+  </svg>
+);
+
+export const WifiOff = (props) => (
+  <svg {...base} {...props}>
+    <path d="M3 3l14 14" />
+    <path d="M2.5 7.5a11 11 0 014-2.3M9 4.6a11 11 0 018.5 2.9M5 10.4a7 7 0 012.8-1.6M12.5 9a7 7 0 012.5 1.4M7.6 13.2a3.5 3.5 0 014.8 0" />
+    <circle cx="10" cy="16" r="0.5" fill="currentColor" />
+  </svg>
+);
